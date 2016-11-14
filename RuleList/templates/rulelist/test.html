@@ -1,0 +1,142 @@
+{% load staticfiles %}
+{% load bootstrap %}
+<html xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet">
+        <script src="//cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="http://cdn.bootcss.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="/static/bootstrap-treeview/bootstrap-treeview.js" type="text/javascript"></script>
+        <link rel="stylesheet" type="text/css" href="/static/css/udf.css">
+        <!--[if lt IE 9]>
+          <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+         <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+         <![endif]-->
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3" style="height:800px; overflow:auto">
+                    <div class="form-group">
+                        <label for="input-select-node" class="sr-only"></label>
+                        <input type="input" class="form-control" id="input-select-node" placeholder="Identify node..." value="">
+                    </div>
+{#                    <div class="checkbox">#}
+{#                        <label>#}
+{#                          <input type="checkbox" class="checkbox" id="chk-select-multi" value="false">#}
+{#                          Multi Select#}
+{#                        </label>#}
+{#                      </div>#}
+{#                    <div class="form-group">#}
+{#                          <button type="button" class="btn btn-success select-node" id="btn-select-node">Select Node</button>#}
+{#                    </div>#}
+{#                    <div class="form-group">#}
+{#                        <button type="button" class="btn btn-danger select-node" id="btn-unselect-node">Unselect Node</button>#}
+{#                    </div>#}
+{#                    <div class="form-group">#}
+{#                        <button type="button" class="btn btn-primary select-node" id="btn-toggle-selected">Toggle Node</button>#}
+{#                    </div>#}
+                    <div id="tree">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div id="data1" style="display: block">
+                    </div>
+                </div>
+            </div>
+        </div>
+      </body>
+        <script type="text/javascript">
+            var submit= function (object) {
+                alert(1);
+            }
+            var addRule= function (obj) {
+                var href=obj.parentNode.getAttribute('selecturi')
+                $("#data1").load(href)
+            }
+            var deleteRule=function (obj) {
+                if(confirm("你确定要删除此规则么，没事，我保证不打你。。。。")) {
+                    var href = obj.parentNode.getAttribute('selecturi')
+                    ruleID = href.split('/')
+                    len = ruleID.length
+                    ruleID[2] = "deleteRule"
+                    newUrl = ruleID.join("/")
+                    $("#data1").load(newUrl)
+                }
+            }
+            var reload
+            $(function  (){
+                function getTree() {
+                    var data1={{ aa|safe }}
+                    return data1;
+            }
+
+            var obj={};
+            obj.text="123";
+{#            $('#tree').treeview({#}
+{#                data:getTree(),#}
+{#                color:"#428bca",#}
+{#                showTags:true,#}
+{#                enableLinks:true,#}
+{#                onNodeSelected:function (event,data) {#}
+{#                    var href=data.href#}
+{#                    $("#data1").load(href)#}
+{#                }#}
+{#            });#}
+            var initSelectableTree = function() {
+                return $('#tree').treeview({
+                    data: getTree(),
+                    levels:1,
+                    color:"#428bca",
+                    showTags:true,
+                    enableLinks:false,
+                    multiSelect: $('#chk-select-multi').is(':checked'),
+                    onNodeSelected:function (event,data) {
+                        if (!data.nodes) {
+                            var href = data.href;
+                            $("#data1").load(href);
+                        }
+                    },
+                    onNodeUnselected:function (event,data) {
+                        $("#data1").empty()
+                    }
+
+              })
+            };
+            var $selectableTree = initSelectableTree();
+
+            var findSelectableNodes = function() {
+              return $selectableTree.treeview('search', [ $('#input-select-node').val(), { ignoreCase: true, exactMatch: false } ]);
+            };
+             var selectableNodes = findSelectableNodes();
+
+{#            $('#chk-select-multi:checkbox').on('change', function () {#}
+{#              console.log('multi-select change');#}
+{#              $selectableTree = initSelectableTree();#}
+{#              selectableNodes = findSelectableNodes();#}
+{#            });#}
+
+            // Select/unselect/toggle nodes
+            $('#input-select-node').on('keyup', function (e) {
+                $selectableTree.treeview('collapseAll', { silent: false });
+                selectableNodes = findSelectableNodes();
+                $('.select-node').prop('disabled', !(selectableNodes.length >= 1));
+            });
+{#    #}
+{#            $('#btn-select-node.select-node').on('click', function (e) {#}
+{#              $selectableTree.treeview('selectNode', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);#}
+{#            });#}
+{#    #}
+{#            $('#btn-unselect-node.select-node').on('click', function (e) {#}
+{#              $selectableTree.treeview('unselectNode', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);#}
+{#            });#}
+{#    #}
+{#            $('#btn-toggle-selected.select-node').on('click', function (e) {#}
+{#              $selectableTree.treeview('toggleNodeSelected', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);#}
+{#            });#}
+
+            })
+        </script>
+</html>

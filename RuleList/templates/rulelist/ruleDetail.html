@@ -1,0 +1,24 @@
+{% load bootstrap %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action={{ request.path }} method="post">
+    {% csrf_token %}
+{#    {% for field in form|bootstrap %}#}
+{#        <div class="fieldWrapper">#}
+{#            {{ field.label }}:{{ field }}#}
+{#            {{ field.errors }}#}
+{#        </div>#}
+{#    {% endfor %}#}
+    {{ form | bootstrap }}
+    <div>
+    <input type="button" value="提交" onclick="submit(this)"/>
+    </div>
+</form>
+</body>
+</html>

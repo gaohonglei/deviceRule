@@ -1,12 +1,6 @@
+{% load staticfiles %}
 {% load bootstrap %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
+{{ form.non_field_errors }}
 <form action={{ request.path }} method="post">
     {% csrf_token %}
 {#    {% for field in form|bootstrap %}#}
@@ -17,8 +11,6 @@
 {#    {% endfor %}#}
     {{ form | bootstrap }}
     <div>
-    <input type="button" value="提交" onclick="submit(this)"/>
+    <input type="submit" value="提交"/>
     </div>
 </form>
-</body>
-</html>

@@ -120,9 +120,13 @@ if __name__ == '__main__':
     #print(1111111111111111111111)
     #deep(tree)
    # preorder(tree)
-   lastorder(tree)
+#   lastorder(tree)
     # a=[1,3,5,6,7,9,14,17,19]
     # print(find(a,20))
+    try:
+        raise "abc"
+    except:
+        print(1)
 
 
 

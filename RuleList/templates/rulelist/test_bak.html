@@ -1,332 +1,203 @@
+<form action="/accounts/login/?next=/accounts/" method="post" id="login-form"><input type="hidden" name="csrfmiddlewaretoken" value="kOhiI4YJdxVkTFDNIvyWeyrXuvMiLl1lIAlD7G6GB8PlaY2q1sPznxW9lIjKfJZ4">
+  <div class="form-row">
+
+    <label class="required" for="id_username">Username:</label> <input autofocus="" id="id_username" maxlength="254" name="username" type="text" value="administrat" required="">
+  </div>
+  <div class="form-row">
+
+    <label class="required" for="id_password">Password:</label> <input id="id_password" name="password" type="password" required="">
+    <input type="hidden" name="next" value="/accounts/">
+  </div>
 
 
-  		$(function() {
+  <div class="submit-row">
+    <label>&nbsp;</label><input type="submit" value="Log in">
+  </div>
+</form>
 
-        var defaultData = [
-          {
-            text: 'Parent 1',
-            href: '#parent1',
-            tags: ['4'],
-            nodes: [
-              {
-                text: 'Child 1',
-                href: '#child1',
-                tags: ['2'],
-                nodes: [
-                  {
-                    text: 'Grandchild 1',
-                    href: '#grandchild1',
-                    tags: ['0']
-                  },
-                  {
-                    text: 'Grandchild 2',
-                    href: '#grandchild2',
-                    tags: ['0']
-                  }
-                ]
-              },
-              {
-                text: 'Child 2',
-                href: '#child2',
-                tags: ['0']
-              }
-            ]
-          },
-          {
-            text: 'Parent 2',
-            href: '#parent2',
-            tags: ['0']
-          },
-          {
-            text: 'Parent 3',
-            href: '#parent3',
-             tags: ['0']
-          },
-          {
-            text: 'Parent 4',
-            href: '#parent4',
-            tags: ['0']
-          },
-          {
-            text: 'Parent 5',
-            href: '#parent5'  ,
-            tags: ['0']
-          }
-        ];
-
-        var alternateData = [
-          {
-            text: 'Parent 1',
-            tags: ['2'],
-            nodes: [
-              {
-                text: 'Child 1',
-                tags: ['3'],
-                nodes: [
-                  {
-                    text: 'Grandchild 1',
-                    tags: ['6']
-                  },
-                  {
-                    text: 'Grandchild 2',
-                    tags: ['3']
-                  }
-                ]
-              },
-              {
-                text: 'Child 2',
-                tags: ['3']
-              }
-            ]
-          },
-          {
-            text: 'Parent 2',
-            tags: ['7']
-          },
-          {
-            text: 'Parent 3',
-            icon: 'glyphicon glyphicon-earphone',
-            href: '#demo',
-            tags: ['11']
-          },
-          {
-            text: 'Parent 4',
-            icon: 'glyphicon glyphicon-cloud-download',
-            href: '/demo.html',
-            tags: ['19'],
-            selected: true
-          },
-          {
-            text: 'Parent 5',
-            icon: 'glyphicon glyphicon-certificate',
-            color: 'pink',
-            backColor: 'red',
-            href: 'http://www.tesco.com',
-            tags: ['available','0']
-          }
-        ];
-
-        var json = '[' +
-          '{' +
-            '"text": "Parent 1",' +
-            '"nodes": [' +
-              '{' +
-                '"text": "Child 1",' +
-                '"nodes": [' +
-                  '{' +
-                    '"text": "Grandchild 1"' +
-                  '},' +
-                  '{' +
-                    '"text": "Grandchild 2"' +
-                  '}' +
-                ']' +
-              '},' +
-              '{' +
-                '"text": "Child 2"' +
-              '}' +
-            ']' +
-          '},' +
-          '{' +
-            '"text": "Parent 2"' +
-          '},' +
-          '{' +
-            '"text": "Parent 3"' +
-          '},' +
-          '{' +
-            '"text": "Parent 4"' +
-          '},' +
-          '{' +
-            '"text": "Parent 5"' +
-          '}' +
-        ']';
-
-
-        $('#treeview1').treeview({
-          data: defaultData
-        });
-
-        $('#treeview2').treeview({
-          levels: 1,
-          data: defaultData
-        });
-
-        $('#treeview3').treeview({
-          levels: 99,
-          data: defaultData
-        });
-
-        $('#treeview4').treeview({
-
-          color: "#428bca",
-          data: defaultData
-        });
-
-        $('#treeview5').treeview({
-          color: "#428bca",
-          expandIcon: 'glyphicon glyphicon-chevron-right',
-          collapseIcon: 'glyphicon glyphicon-chevron-down',
-          nodeIcon: 'glyphicon glyphicon-bookmark',
-          data: defaultData
-        });
-
-        $('#treeview6').treeview({
-          color: "#428bca",
-          expandIcon: "glyphicon glyphicon-stop",
-          collapseIcon: "glyphicon glyphicon-unchecked",
-          nodeIcon: "glyphicon glyphicon-user",
-          showTags: true,
-          data: defaultData
-        });
-
-        $('#treeview7').treeview({
-          color: "#428bca",
-          showBorder: false,
-          data: defaultData
-        });
-
-        $('#treeview8').treeview({
-          expandIcon: "glyphicon glyphicon-stop",
-          collapseIcon: "glyphicon glyphicon-unchecked",
-          nodeIcon: "glyphicon glyphicon-user",
-          color: "yellow",
-          backColor: "purple",
-          onhoverColor: "orange",
-          borderColor: "red",
-          showBorder: false,
-          showTags: true,
-          highlightSelected: true,
-          selectedColor: "yellow",
-          selectedBackColor: "darkorange",
-          data: defaultData
-        });
-
-        $('#treeview9').treeview({
-          expandIcon: "glyphicon glyphicon-stop",
-          collapseIcon: "glyphicon glyphicon-unchecked",
-          nodeIcon: "glyphicon glyphicon-user",
-          color: "yellow",
-          backColor: "purple",
-          onhoverColor: "orange",
-          borderColor: "red",
-          showBorder: false,
-          showTags: true,
-          highlightSelected: true,
-          selectedColor: "yellow",
-          selectedBackColor: "darkorange",
-          data: alternateData
-        });
-
-        $('#treeview10').treeview({
-          color: "#428bca",
-          enableLinks: true,
-          data: defaultData
-        });
+<form action="/deviceRule/addRule/1078ef2e-1d7c-4e79-84d6-fbf6d829e2a2/0/" method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="oWgAqy7RJ83Se3MsSni1UrILiLGiqsJUrPfx235HZdvMrMpaTlxJAuW4ex5OkZKr">
 
 
 
-        var $searchableTree = $('#treeview-searchable').treeview({
-          data: defaultData,
-        });
-
-        var search = function(e) {
-          var pattern = $('#input-search').val();
-          var options = {
-            ignoreCase: $('#chk-ignore-case').is(':checked'),
-            exactMatch: $('#chk-exact-match').is(':checked'),
-            revealResults: $('#chk-reveal-results').is(':checked')
-          };
-          var results = $searchableTree.treeview('search', [ pattern, options ]);
-
-          var output = '<p>' + results.length + ' matches found</p>';
-          $.each(results, function (index, result) {
-            output += '<p>- ' + result.text + '</p>';
-          });
-          $('#search-output').html(output);
-        }
-
-        $('#btn-search').on('click', search);
-        $('#input-search').on('keyup', search);
-
-        $('#btn-clear-search').on('click', function (e) {
-          $searchableTree.treeview('clearSearch');
-          $('#input-search').val('');
-          $('#search-output').html('');
-        });
-
-
-        var initSelectableTree = function() {
-          return $('#treeview-selectable').treeview({
-            data: defaultData,
-            multiSelect: $('#chk-select-multi').is(':checked'),
-            onNodeSelected: function(event, node) {
-              $('#selectable-output').prepend('<p>' + node.text + ' was selected</p>');
-            },
-            onNodeUnselected: function (event, node) {
-              $('#selectable-output').prepend('<p>' + node.text + ' was unselected</p>');
-            }
-          });
-        };
-        var $selectableTree = initSelectableTree();
-
-        var findSelectableNodes = function() {
-          return $selectableTree.treeview('search', [ $('#input-select-node').val(), { ignoreCase: false, exactMatch: false } ]);
-        };
-        var selectableNodes = findSelectableNodes();
-
-        $('#chk-select-multi:checkbox').on('change', function () {
-          console.log('multi-select change');
-          $selectableTree = initSelectableTree();
-          selectableNodes = findSelectableNodes();
-        });
-
-        // Select/unselect/toggle nodes
-        $('#input-select-node').on('keyup', function (e) {
-          selectableNodes = findSelectableNodes();
-          $('.select-node').prop('disabled', !(selectableNodes.length >= 1));
-        });
-
-        $('#btn-select-node.select-node').on('click', function (e) {
-          $selectableTree.treeview('selectNode', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);
-        });
-
-        $('#btn-unselect-node.select-node').on('click', function (e) {
-          $selectableTree.treeview('unselectNode', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);
-        });
-
-        $('#btn-toggle-selected.select-node').on('click', function (e) {
-          $selectableTree.treeview('toggleNodeSelected', [ selectableNodes, { silent: $('#chk-select-silent').is(':checked') }]);
-        });
 
 
 
-        var $expandibleTree = $('#treeview-expandible').treeview({
-          data: defaultData,
-          onNodeCollapsed: function(event, node) {
-            $('#expandible-output').prepend('<p>' + node.text + ' was collapsed</p>');
-          },
-          onNodeExpanded: function (event, node) {
-            $('#expandible-output').prepend('<p>' + node.text + ' was expanded</p>');
-          }
-        });
 
-        var findExpandibleNodess = function() {
-          return $expandibleTree.treeview('search', [ $('#input-expand-node').val(), { ignoreCase: false, exactMatch: false } ]);
-        };
-        var expandibleNodes = findExpandibleNodess();
 
-        // Expand/collapse/toggle nodes
-        $('#input-expand-node').on('keyup', function (e) {
-          expandibleNodes = findExpandibleNodess();
-          $('.expand-node').prop('disabled', !(expandibleNodes.length >= 1));
-        });
 
-        $('#btn-expand-node.expand-node').on('click', function (e) {
-          var levels = $('#select-expand-node-levels').val();
-          $expandibleTree.treeview('expandNode', [ expandibleNodes, { levels: levels, silent: $('#chk-expand-silent').is(':checked') }]);
-        });
 
-        $('#btn-collapse-node.expand-node').on('click', function (e) {
-          $expandibleTree.treeview('collapseNode', [ expandibleNodes, { silent: $('#chk-expand-silent').is(':checked') }]);
-        });
 
-       …
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required" for="id_Name">规则名称</label>
+
+
+        <div class=" ">
+            <input class=" form-control" id="id_Name" maxlength="50" name="Name" type="text" required="">
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required" for="id_StreamIndex">分析码流</label>
+
+
+        <div class=" ">
+            <select class=" form-control" id="id_StreamIndex" name="StreamIndex" required="">
+<option value="0">主码流</option>
+<option value="1">辅码流</option>
+</select>
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required" for="id_EventLevel">事件等级</label>
+
+
+        <div class=" ">
+            <select class=" form-control" id="id_EventLevel" name="EventLevel" required="">
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required">是否激活</label>
+
+        <div class="">
+
+                <div class="radio">
+                    <label>
+                        <input checked="checked" id="id_IsActive_0" name="IsActive" type="radio" value="0" required="">
+                        不激活
+                    </label>
+                </div>
+
+                <div class="radio">
+                    <label>
+                        <input id="id_IsActive_1" name="IsActive" type="radio" value="1" required="">
+                        激活
+                    </label>
+                </div>
+
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required" for="id_ServiceID">隶属服务</label>
+
+
+        <div class=" ">
+            <select class=" form-control" id="id_ServiceID" name="ServiceID" required="">
+<option value="8d51bcaf-34ef-43b0-b742-61235c91d5b0">人群聚集</option>
+<option value="7f133a36-37c0-4f3c-906f-c9ab7af8fd1f">入侵检测</option>
+<option value="1c13845f-482e-4806-943d-507088e42751">视频诊断</option>
+<option value="c6731d30-c872-11e3-a896-00e081e85edb">徘徊检测</option>
+<option value="dac8a76d-4714-11e5-b503-90b11c4f1625">LNG手套检测</option>
+<option value="24be1d72-bdd2-11e2-9a27-00155d011700">人脸检测</option>
+<option value="8257688f-bdd1-11e2-9a27-00155d011700">偷盗检测</option>
+<option value="178b2db5-f9bd-11e2-a1ee-00155d011700">打架斗殴检测</option>
+<option value="18361d2b-4fbd-11e5-b987-90b11c4f1625">LNG吸烟检测</option>
+</select>
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  required" for="id_EventSourceID">分析算法</label>
+
+
+        <div class=" ">
+            <select class=" form-control" id="id_EventSourceID" name="EventSourceID" required="">
+<option value="803d5d1e-e33a-45bc-a4b8-bdef75f984e4">analysis_service@172.16.1.28</option>
+<option value="3a6d58d7-3217-4a96-8503-9cac18931223">analysis_service_lng@172.16.1.28_lng</option>
+</select>
+
+
+
+
+        </div>
+
+</div>
+
+
+
+
+<div class="form-group">
+
+
+            <label class="control-label  " for="id_EventSourceConfig">配置文件</label>
+
+
+        <div class=" ">
+            <textarea class=" form-control" cols="40" id="id_EventSourceConfig" name="EventSourceConfig" rows="10"></textarea>
+
+
+
+
+        </div>
+
+</div>
+
+
+
+    <div>
+    <input type="button" value="提交">
+    </div>
+</form>

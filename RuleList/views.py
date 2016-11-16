@@ -7,50 +7,41 @@ from django.contrib.auth import authenticate,login
 from  .forms import RuleForm,RuleAdd
 import json,redis
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from models import User
 import traceback,copy
 import RuleOperation
 redisConn=redis.StrictRedis(host="172.16.0.181")
 
+def getServiceAndEventSource():
+    serviceAndEvent = RuleOperation.getServiceAndEventSource()
+    sourceList = []
+    for source in serviceAndEvent["eventSource"]:
+        for k, v in source.items():
+            sourceForm = (k, v)
+            sourceList.append(sourceForm)
+    serviceList = []
+    for source in serviceAndEvent["serviceList"]:
+        for k, v in source.items():
+            sourceForm = (k, v)
+            serviceList.append(sourceForm)
+    return serviceList,sourceList
 @login_required
 def GetAllDevice(request):
-    # if request.method== 'POST':
-    #     form = forms.AuthenticationForm(request.POST)
-    #     if form.is_valid():
-    #         username=form.cleaned_data['username']
-    #         password=form.cleaned_data['password']
-    #         user=User.objects.filter(username__exact=username,password__exact=password)
-    #         if user:
-    #             repose
     try:
-        deviceTree=RuleOperation.getAlldevice()
-        if deviceTree:
-            jsonTree=[]
-            for parent in deviceTree:
-                pnode={}
-                pnode["text"]=parent.text
-                pnode["tags"]=parent.tags
-                pnode["nodes"]=[]
-                for node in parent.nodes:
-                    cnode={}
-                    cnode["text"]=node.text
-                    cnode["tags"]=node.tags
-                    cnode["href"]=node.href
-                    cnode["nodes"]=[]
-                    for grandchileNode in node.nodes:
-                        gnode={}
-                        gnode["text"]=grandchileNode.text
-                        gnode["href"]=grandchileNode.href
-                        cnode["nodes"].append(gnode)
-                    pnode["nodes"].append(cnode)
-                jsonTree.append(pnode)
-            context={"aa":json.dumps(jsonTree)}
+        jsonTree=RuleOperation.getAlldevice()
+        if jsonTree:
+            message=request.GET.get("message")
+            if message:
+                DetailData=message
+            else:
+                DetailData=''
+            context={"aa":json.dumps(jsonTree),"DetailData":DetailData}
         else:
-            context={"aa":None}
-    except RuntimeError,ex:
-        print(ex)
-        context={"aa":None}
+            context={"aa":None,"DetailData":"没有设备，请先添加设备~"}
+    except Exception,ex:
+        traceback.print_exc()
+        context={"aa":None,"DetailData":ex}
     finally:
         return render(request, 'rulelist/test.html', context)
 
@@ -74,51 +65,52 @@ def GetDeviceRuleChannel(request,deviceID,channelID):
 def GetRuleByRuleID(request,ruleID):
     try:
         if request.method=='POST':
-            a=request.POST["IsActive"]
             ruleEditData=request.POST.copy()
             ruleEditData["ruleID"]=ruleID
             flag=RuleOperation.updateRule(ruleEditData)
             if flag==False:
-                return HttpResponse("修改失败")
+                return HttpResponseRedirect('/deviceRule/?message=修改失败')
             else:
-                return HttpResponse("修改成功")
+                return HttpResponseRedirect('/deviceRule/?message=修改成功')
         else:
             rule=RuleForm()
-            eventSource=RuleOperation.getDeviceRule(ruleID)
-            sourceList=[]
-            for source in eventSource.SourceList:
-                for k,v in source.items():
-                    sourceForm=(k,v)
-                    sourceList.append(sourceForm)
-            rule.fields["EventSourceID"].choices=sourceList
-            rule.fields["EventSourceID"].initial = eventSource.baseRule.EventSourceID
-            serviceList=[]
-            for service in eventSource.ServList:
-                for k,v in service.items():
-                    serviceList.append((k,v))
-            rule.fields["ServiceID"].choices=serviceList
-            rule.fields["ServiceID"].initial=eventSource.baseRule.ServiceID
-            rule.fields["Name"].initial=eventSource.baseRule.Name
-            #rule.fields["level"].choices=[(0,0),(1,3),(2,4),(3,5),(4,6)]
-            rule.fields["EventLevel"].initial=eventSource.baseRule.EventLevel
-            rule.fields["EventSourceConfig"].initial=eventSource.baseRule.ConfigData
-            if eventSource.baseRule.IsActive:
-                rule.fields["IsActive"].initial=1
+            AssembleRule=RuleOperation.getDeviceRule(ruleID)
+            if AssembleRule:
+                sourceList=[]
+                for source in AssembleRule.SourceList:
+                    for k,v in source.items():
+                        sourceForm=(k,v)
+                        sourceList.append(sourceForm)
+                rule.fields["EventSourceID"].choices=sourceList
+                rule.fields["EventSourceID"].initial = AssembleRule.baseRule.EventSourceID
+                serviceList=[]
+                for service in AssembleRule.ServList:
+                    for k,v in service.items():
+                        serviceList.append((k,v))
+                rule.fields["ServiceID"].choices=serviceList
+                rule.fields["ServiceID"].initial=AssembleRule.baseRule.ServiceID
+                rule.fields["Name"].initial=AssembleRule.baseRule.Name
+                #rule.fields["level"].choices=[(0,0),(1,3),(2,4),(3,5),(4,6)]
+                rule.fields["EventLevel"].initial=AssembleRule.baseRule.EventLevel
+                rule.fields["EventSourceConfig"].initial=AssembleRule.baseRule.ConfigData
+                if AssembleRule.baseRule.IsActive:
+                    rule.fields["IsActive"].initial=1
+                else:
+                    rule.fields["IsActive"].initial=0
+                if AssembleRule.baseRule.StreamIndex==1:
+                    rule.fields["StreamIndex"].initial=1
+                else:
+                    rule.fields["StreamIndex"].initial=0
+                return render(request,'rulelist/ruleDetail.html',{'form':rule})
             else:
-                rule.fields["IsActive"].initial=0
-            if eventSource.baseRule.StreamIndex==1:
-                rule.fields["StreamIndex"].initial=1
-            else:
-                rule.fields["StreamIndex"].initial=0
-            return render(request,'rulelist/ruleDetail.html',{'form':rule})
-    except:
+                return render(request,'rulelist/error.html',context={"DetailData":"没有此规则，或者此规则刚刚删除，请刷新页面！"})
+    except RuntimeError,ex:
         traceback.print_exc()
+        return render(request, 'rulelist/error.html', {'DetailData': ex})
 
 def deleteRuleByRuleID(request,ruleID):
     try:
-        print(ruleID)
         flag=RuleOperation.deleteRule(ruleID)
-        print(flag)
         if flag==0:
             return HttpResponse("删除成功")
         else:
@@ -126,35 +118,28 @@ def deleteRuleByRuleID(request,ruleID):
     except:
         traceback.print_exc()
         return HttpResponse("删除失败")
+
 def AddRuleByDeviceID(request,deviceID,channelID):
     try:
         if request.method=="POST":
+            serviceList,sourceList=getServiceAndEventSource()
+            form=RuleAdd(request.POST,ServiceChoices=serviceList,EventSourceChoices=sourceList)
             # rule=RuleAdd(request.POST)
             rule = request.POST.copy()
             rule["DeviceID"]=deviceID
             rule["ChannelIndex"]=int(channelID)
             flag=RuleOperation.addRule(rule)
             if flag==False:
-                return HttpResponse("添加失败")
+                return HttpResponseRedirect('/deviceRule/?message=修改失败')
             else:
-                return HttpResponse("添加成功")
+                return HttpResponseRedirect('/deviceRule/?message=添加失败')
         else:
-            rule=RuleAdd()
+            serviceList,sourceList=getServiceAndEventSource()
+            rule=RuleAdd(ServiceChoices=serviceList,EventSourceChoices=sourceList)
             rule.fields["IsActive"].initial=0
-            serviceAndEvent=RuleOperation.getServiceAndEventSource()
-            sourceList=[]
-            for source in serviceAndEvent["eventSource"]:
-                for k,v in source.items():
-                    sourceForm=(k,v)
-                    sourceList.append(sourceForm)
-            rule.fields["EventSourceID"].choices=sourceList
-            serviceList=[]
-            for source in serviceAndEvent["serviceList"]:
-                for k,v in source.items():
-                    sourceForm=(k,v)
-                    serviceList.append(sourceForm)
-            rule.fields["ServiceID"].choices=serviceList
             return render(request, 'rulelist/ruleDetail.html', {'form': rule})
-    except:
+    except Exception,ex:
         traceback.print_exc()
-        pass
+        message='/deviceRule/?message=调用ice接口发生错误，或者提交表时发生错误！！错误详情：{0}'.format(ex)
+        return HttpResponseRedirect(message)
+

@@ -2,7 +2,7 @@
 # coding=utf-8
 from django.shortcuts import render
 from django.conf import settings
-#from django.core.cache import cache as redisConn
+from django.core.cache import cache as redisConn
 from django.contrib.auth import authenticate,login
 from  .forms import RuleForm,RuleAdd
 import json,redis
@@ -11,9 +11,11 @@ from django.http import HttpResponse,HttpResponseRedirect
 from models import User
 import traceback,copy
 import RuleOperation
-redisConn=redis.StrictRedis(host="172.16.0.181")
 
 def getServiceAndEventSource():
+    '''
+    从上层服务获取service和EventSource列表
+    '''
     serviceAndEvent = RuleOperation.getServiceAndEventSource()
     sourceList = []
     for source in serviceAndEvent["eventSource"]:
@@ -28,6 +30,12 @@ def getServiceAndEventSource():
     return serviceList,sourceList
 @login_required
 def GetAllDevice(request):
+    '''
+    获取所有设备，以及上面的规则，以json格式渲染到html中
+    :param request:
+    :return:
+    '''
+    print(request)
     try:
         jsonTree=RuleOperation.getAlldevice()
         if jsonTree:
@@ -46,6 +54,13 @@ def GetAllDevice(request):
         return render(request, 'rulelist/test.html', context)
 
 def GetDeviceRuleChannel(request,deviceID,channelID):
+    '''
+    根据设备ID和通道ID获取通道上面的规则
+    :param request:
+    :param deviceID:
+    :param channelID:
+    :return:
+    '''
     redisID=":{0}:{1},{2}".format("ruleDevice",deviceID,channelID)
     ruleIdList=redisConn.smembers(redisID)
     #ruleIdList=redisConn.get(":ruleDevice:17763917-051e-4508-9ff3-d3bd186fa4c1_0")
@@ -63,6 +78,12 @@ def GetDeviceRuleChannel(request,deviceID,channelID):
         return render(request, 'rulelist/redis.html', context)
 
 def GetRuleByRuleID(request,ruleID):
+    '''
+    根据规则ID，获取规则，展示规则
+    :param request:
+    :param ruleID:
+    :return:
+    '''
     try:
         if request.method=='POST':
             ruleEditData=request.POST.copy()
@@ -109,6 +130,12 @@ def GetRuleByRuleID(request,ruleID):
         return render(request, 'rulelist/error.html', {'DetailData': ex})
 
 def deleteRuleByRuleID(request,ruleID):
+    '''
+    根据规则ID，删除指定的规则
+    :param request:
+    :param ruleID:
+    :return:
+    '''
     try:
         flag=RuleOperation.deleteRule(ruleID)
         if flag==0:
@@ -120,6 +147,13 @@ def deleteRuleByRuleID(request,ruleID):
         return HttpResponse("删除失败")
 
 def AddRuleByDeviceID(request,deviceID,channelID):
+    '''
+    根据设备ID和通道ID,，添加到此设备通道上
+    :param request:
+    :param deviceID:
+    :param channelID:
+    :return:
+    '''
     try:
         if request.method=="POST":
             serviceList,sourceList=getServiceAndEventSource()

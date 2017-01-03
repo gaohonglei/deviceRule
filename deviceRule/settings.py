@@ -96,7 +96,6 @@ CACHES = {
         },
     },
 }
-redisConn=redis.StrictRedis(host="172.16.0.181")
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 
